@@ -1,0 +1,52 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 10pt;
+  margin: 0;
+  background: #fff;
+  font-variant-numeric: lining-nums;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.departures {
+  width: 100%;
+  border-collapse: collapse;
+  
+}
+
+.departures td {
+  padding: 2px;
+  white-space: nowrap;
+}
+
+.departures td.stop {
+    width: 3em;
+}
+
+.departures td.line {
+    width: 3em;
+}
+
+.departures td.line {
+    width: 3em;
+}
+
+
+.departures tr:nth-child(2n) {
+  background: #f3f3f3;
+}
+
+.departures tr.soon {
+  color: firebrick;
+}
+
+.departures td.mintodep {
+  text-align: right;
+  width: 3em;
+}
+
+.departures td.deptime {
+  width: 3em;
+}
