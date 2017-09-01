@@ -2,37 +2,22 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 10pt;
   margin: 0;
+  min-width: 400px;
+  height: 500px;
+  overflow-y: scroll;
   background: #fff;
   font-variant-numeric: lining-nums;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .departures {
+  margin-top: 1.5em;
   width: 100%;
   border-collapse: collapse;
-  
 }
-
-.departures td {
-  padding: 2px;
-  white-space: nowrap;
-}
-
-.departures td.stop {
-    width: 3em;
-}
-
-.departures td.line {
-    width: 3em;
-}
-
-.departures td.line {
-    width: 3em;
-}
-
 
 .departures tr:nth-child(2n) {
   background: #f3f3f3;
@@ -42,6 +27,19 @@ body {
   color: firebrick;
 }
 
+.departures td {
+  padding: 2px;
+  white-space: nowrap;
+}
+
+.departures td.stop {
+  width: 3em;
+}
+
+.departures td.line {
+  width: 3em;
+}
+
 .departures td.mintodep {
   text-align: right;
   width: 3em;
@@ -49,4 +47,49 @@ body {
 
 .departures td.deptime {
   width: 3em;
+}
+
+.nodep {
+  margin-top: 1.5em;
+  padding: 0.5em;
+  text-align: center;
+  color: #666;
+}
+
+.bar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background: #333;
+  color: #f7ab1a;
+}
+.bar button {
+  background: none;
+  border: none;
+  color: inherit;
+  outline: none;
+}
+
+div.settings {
+  padding: 1em;
+  text-align: center;
+}
+
+div.settings label {
+  padding: 1em;
+  display: block;
+}
+
+div.settings input {
+  padding: 0.5em;
+  margin: 0.5em;
+  width: 100%;
+  display: block;
+}
+
+div.settings button {
+  margin: 0.5em;
+  padding: 0.5em 1.5em;
+  
 }

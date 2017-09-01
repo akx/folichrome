@@ -1,18 +1,40 @@
-const stops = ["T4", "456"];
-const data = {};
+const config = new Config({ stops: "T4" }, "folichrome");
+let data = {};
+let error = null;
+let showSettings = false;
+
+function parseStops() {
+  return (config.data.stops || "")
+    .split(/[^a-z0-9]+/gi)
+    .filter(s => s.length)
+    .sort();
+}
 
 function refresh() {
+  const stops = parseStops();
+  if (!stops.length) {
+    data = {};
+    return Promise.resolve(true);
+  }
+  const newData = {};
   const promises = stops.map(stop =>
-    m
-      .request({
-        method: "GET",
-        url: `http://data.foli.fi/siri/sm/${stop}`
-      })
+    fetch(`http://data.foli.fi/siri/sm/${stop}`)
+      .then(r => r.json())
       .then(stopData => {
-        data[stop] = stopData;
+        newData[stop] = stopData;
       })
   );
-  return Promise.all(promises);
+  return Promise.all(promises)
+    .then(() => {
+      data = newData;
+      error = null;
+      m.redraw();
+    })
+    .catch(err => {
+      data = {};
+      error = err;
+      m.redraw();
+    });
 }
 
 function formatLine(i) {
@@ -30,16 +52,63 @@ function formatLine(i) {
   ]);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  m.mount(document.body, {
-    oninit(v) {
-      refresh();
-    },
-    view() {
-      const allInfo = Object.keys(data)
-        .reduce((acc, stop) => acc.concat(data[stop].result.map(datum => Object.assign({ stop }, datum))), [])
-        .sort((a, b) => a.expecteddeparturetime - b.expecteddeparturetime);
-      return m("div", m("table.departures", m("tbody", allInfo.map(formatLine))));
-    }
-  });
-});
+class FoliChrome {
+  oninit(v) {
+    config.load().then(() => {
+      // Chrome gets confused when the layout of the popup changes too quickly.
+      setTimeout(refresh, 150);
+    });
+  }
+  renderRegular() {
+    const allInfo = Object.keys(data)
+      .reduce((acc, stop) => acc.concat(data[stop].result.map(datum => Object.assign({ stop }, datum))), [])
+      .sort((a, b) => a.expecteddeparturetime - b.expecteddeparturetime);
+    const departureTable = allInfo.length
+      ? m("table.departures", m("tbody", allInfo.map(formatLine)))
+      : m("div.nodep", "No departures to show");
+
+    const settingsBar = m(
+      "div.bar",
+      m(
+        "button",
+        {
+          onclick() {
+            showSettings = true;
+          }
+        },
+        "Settings"
+      )
+    );
+    return m("div", settingsBar, departureTable);
+  }
+  renderSettings() {
+    return m("div.settings", [
+      m("label", "Which stops do you want to show?"),
+      m("input", {
+        placeholder: "T4, 301",
+        value: config.data.stops,
+        oninput: m.withAttr("value", v => {
+          config.data.stops = v;
+        })
+      }),
+      m(
+        "button",
+        {
+          onclick() {
+            config.data.stops = parseStops(config.data.stops).join(", ");
+            config.save();
+            showSettings = false;
+            refresh();
+          }
+        },
+        "Save"
+      )
+    ]);
+  }
+  view() {
+    const body = showSettings ? this.renderSettings() : this.renderRegular();
+    return body;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => m.mount(document.body, FoliChrome));
