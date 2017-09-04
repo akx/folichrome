@@ -58,6 +58,10 @@ class FoliChrome {
       // Chrome gets confused when the layout of the popup changes too quickly.
       setTimeout(refresh, 150);
     });
+    setInterval(refresh, 60000);
+    setInterval(() => {
+      if (!showSettings) m.redraw();
+    }, 15000);
   }
   renderRegular() {
     const allInfo = Object.keys(data)
