@@ -47,9 +47,14 @@ function formatLine(i) {
     m("td.stop", i.stop),
     m("td.line", i.lineref),
     m("td.dest", i.destinationdisplay),
-    m("td.deptime", `${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`),
+    m("td.deptime", `${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`),
     m("td.mintodep", `\u25BB ${minutesToDeparture.toFixed(0)} min`),
   ]);
+}
+
+function departureComparer(a, b) {
+  if (a.stop !== b.stop) return a.stop < b.stop ? -1 : +1;
+  return a.expecteddeparturetime - b.expecteddeparturetime;
 }
 
 class FoliChrome {
@@ -63,10 +68,11 @@ class FoliChrome {
       if (!showSettings) m.redraw();
     }, 15000);
   }
+
   renderRegular() {
     const allInfo = Object.keys(data)
       .reduce((acc, stop) => acc.concat(data[stop].result.map(datum => Object.assign({ stop }, datum))), [])
-      .sort((a, b) => a.expecteddeparturetime - b.expecteddeparturetime);
+      .sort(departureComparer);
     const departureTable = allInfo.length
       ? m("table.departures", m("tbody", allInfo.map(formatLine)))
       : m("div.nodep", "No departures to show");
@@ -85,6 +91,7 @@ class FoliChrome {
     );
     return m("div", settingsBar, departureTable);
   }
+
   renderSettings() {
     return m("div.settings", [
       m("label", "Which stops do you want to show?"),
@@ -109,6 +116,7 @@ class FoliChrome {
       )
     ]);
   }
+
   view() {
     const body = showSettings ? this.renderSettings() : this.renderRegular();
     return body;
