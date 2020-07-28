@@ -14,7 +14,6 @@ body {
 }
 
 .departures {
-  margin-top: 1.5em;
   width: 100%;
   border-collapse: collapse;
 }
@@ -59,7 +58,7 @@ body {
 .bar {
   position: fixed;
   left: 0;
-  top: 0;
+  bottom: 0;
   width: 100%;
   background: #333;
   color: #f7ab1a;
@@ -69,6 +68,8 @@ body {
   border: none;
   color: inherit;
   outline: none;
+  cursor: pointer;
+  padding: 2px;
 }
 
 div.settings {
